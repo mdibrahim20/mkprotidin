@@ -30,8 +30,11 @@ class AppServiceProvider extends ServiceProvider
             return $user->role === 'author';
         });
     
-        Gate::define('publisher', function (User $user) {
-            return $user->role === 'publisher';
+        Gate::define('editor', function (User $user) {
+            return $user->role === 'editor';
+        });
+        Gate::define('approve-article', function (User $user) {
+            return in_array($user->role, ['admin', 'editor']);
         });
     }
 }

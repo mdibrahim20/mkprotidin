@@ -1,7 +1,10 @@
 @php
-    $categories = \App\Models\Category::all();
+    $allCategories = \App\Models\Category::all(); // Fetch all categories
+    $categories = $allCategories->take(9); // First 9 categories
+    $remainingCategories = $allCategories->skip(9); // Remaining categories
     $banner = \App\Models\Ads::latest()->first();
 @endphp
+
 
 <header class="th-header header-layout1">
     <div class="header-top">
@@ -10,22 +13,21 @@
                 <div class="col-auto d-none d-lg-block">
                     <div class="header-links">
                         <ul>
-                            <li><i class="fal fa-calendar-days"></i><a href="#">{{ now()->format('d F, Y') }}</a></li>
-                            <li><a href="about.html">Privacy Policy</a></li>
-                            <li><a href="about.html">Terms & Conditions</a></li>
+<li>
+    <i class="fal fa-calendar-days"></i>
+    <a href="#" id="bangla-date"></a>
+</li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-auto">
                     <div class="header-links">
                         <ul>
-                            <li><i class="far fa-user"></i><a href="/login">Login / Register</a></li>
                             <li>
                                 <div class="social-links">
-                                    <a href="https://www.facebook.com/"><i class="fab fa-facebook-f"></i></a>
-                                    <a href="https://www.twitter.com/"><i class="fab fa-twitter"></i></a>
-                                    <a href="https://www.linkedin.com/"><i class="fab fa-linkedin-in"></i></a>
-                                    <a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.facebook.com/share/18pSJUpJwy/?mibextid=wwXIfr" target="_blank" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://www.instagram.com/mkprotidin?igsh=emRtanMzbWFtdnlw" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+                            <a href="https://youtube.com/@mkprotidin?si=UJ9ZaXjfeWvDUe2y" target="_blank" class="social-icon"><i class="fab fa-youtube"></i></a>
                                 </div>
                             </li>
                         </ul>
@@ -45,11 +47,11 @@
                 </div>
                 <div class="col-8">
                     @if($banner)
-                    <div class="header-ads">
+                    
                         <a href="{{ $banner->link ?? '#' }}">
                             <img src="{{ asset('storage/'.$banner->image) }}" alt="ads" class="w-100">
                         </a>
-                    </div>
+                    
                     @endif
                 </div>
             </div>
@@ -69,17 +71,23 @@
                     <div class="col-auto">
                         <nav class="main-menu d-none d-lg-inline-block">
                             <ul>
-                                <li><a href="/">Home</a></li>
-                                <li><a href="about.html">About Us</a></li>
-                                <li class="menu-item-has-children">
-                                    <a href="#">Categories</a>
-                                    <ul class="sub-menu">
-                                        @foreach ($categories as $category)
-                                            <li><a href="{{ url('category/'.$category->id) }}">{{ $category->name }}</a></li>
-                                        @endforeach
-                                    </ul>
-                                </li>
-                                <li><a href="contact.html">Contact</a></li>
+                                <li><a href="/">হোম</a></li>
+                                
+                                    @foreach ($categories as $category)
+                                    <li><a href="{{ url('category/'.$category->id) }}">{{ $category->name }}</a></li>
+                                    @endforeach
+                                    <li class="menu-item-has-children">
+                                        <a href="#">অন্যান্য</a>
+                                        <ul class="sub-menu">
+                                            @foreach ($remainingCategories as $remainingCategorie)
+                                            <li>
+                                                <a href="{{ url('category/'.$category->id) }}">{{$remainingCategorie->name}}</a>
+                                            </li>
+                                            @endforeach
+                                            
+                                        </ul>
+                                    </li>
+                                    <li><a href="{{url('/archive')}}">আর্কাইভ</a></li>
                             </ul>
                         </nav>
                     </div>
@@ -104,18 +112,57 @@
         </div>
         <div class="th-mobile-menu">
             <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="about.html">About Us</a></li>
-                <li class="menu-item-has-children">
-                    <a href="#">Categories</a>
-                    <ul class="sub-menu">
-                        @foreach ($categories as $category)
-                            <li><a href="{{ url('category/'.$category->id) }}">{{ $category->name }}</a></li>
-                        @endforeach
-                    </ul>
-                </li>
-                <li><a href="contact.html">Contact</a></li>
+                <li><a href="/">হোম</a></li>
+                    @foreach ($categories as $category)
+                    <li><a href="{{ url('category/'.$category->id) }}">{{ $category->name }}</a></li>
+                    @endforeach
+                    <li class="menu-item-has-children">
+                        <a href="#">অন্যান্য</a>
+                        <ul class="sub-menu">
+                            @foreach ($remainingCategories as $remainingCategorie)
+                            <li>
+                                <a href="{{ url('category/'.$category->id) }}">{{$remainingCategorie->name}}</a>
+                            </li>
+                            @endforeach
+                            
+                        </ul>
+                    </li>
             </ul>
         </div>
     </div>
 </div>
+<script>
+    function convertToBanglaNumber(number) {
+        const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        return number.toString().replace(/\d/g, digit => banglaDigits[digit]);
+    }
+
+    function updateBanglaDate() {
+        const now = new Date();
+
+        // Convert to Bangladesh Time (GMT+6)
+        now.setUTCHours(now.getUTCHours() + 6);
+
+        const day = convertToBanglaNumber(now.getDate());
+        const year = convertToBanglaNumber(now.getFullYear());
+
+        const monthNames = [
+            'জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন',
+            'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'
+        ];
+        const dayNames = [
+            'রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'
+        ];
+
+        const month = monthNames[now.getMonth()];
+        const dayName = dayNames[now.getDay()];
+
+        document.getElementById('bangla-date').innerText = `${dayName}, ${day} ${month}, ${year}`;
+    }
+
+    // Initial call
+    updateBanglaDate();
+
+    // Update every 60 seconds
+    setInterval(updateBanglaDate, 60000);
+</script>

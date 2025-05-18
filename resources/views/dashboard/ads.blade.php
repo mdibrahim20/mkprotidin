@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ad Management</title>
+    <!-- Toastify CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+<!-- Toastify JS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         function openModal(modalId) {
@@ -15,79 +22,48 @@
         }
 
         function editAd(adId) {
-    fetch(`/admin/ads/${adId}/edit`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Ad Data Received:", data); // Debugging Log
+            fetch(`/admin/ads/${adId}/edit`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Ad Data Received:", data); // Debugging Log
 
-            document.getElementById('edit_ad_id').value = data.id;
-            document.getElementById('edit_ad_title').value = data.title;
-            document.getElementById('edit_ad_position').value = data.position;
-            document.getElementById('edit_ad_url').value = data.url;
+                    document.getElementById('edit_ad_id').value = data.id;
+                    document.getElementById('edit_ad_title').value = data.title;
+                    document.getElementById('edit_ad_position').value = data.position;
+                    document.getElementById('edit_ad_url').value = data.url;
 
-            // Ensure the form action is set correctly
-            document.getElementById('editAdForm').setAttribute('action', `/admin/ads/${data.id}`);
+                    // Ensure the form action is set correctly
+                    document.getElementById('editAdForm').setAttribute('action', `/admin/ads/${data.id}`);
 
-            // Open the modal
-            openModal('editAdModal');
-        })
-        .catch(error => {
-            console.error('Error fetching ad data:', error);
-        });
-}
+                    // Open the modal
+                    openModal('editAdModal');
+                })
+                .catch(error => {
+                    console.error('Error fetching ad data:', error);
+                });
+        }
 
+       
     </script>
 </head>
+
 <body class="bg-gray-100">
     <div class="flex h-screen">
-        <aside class="w-64 bg-gray-800 text-white p-6">
-            <h2 class="text-2xl font-bold mb-6">Admin Dashboard</h2>
-            <nav class="bg-gray-800 text-white p-4">
-                <ul>
-                    <li class="mb-4">
-                        <a href="{{ route('dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-700">Dashboard</a>
-                    </li>
-                    <li class="mb-4">
-                        <a href="{{ route('admin.articles.index') }}" class="block py-2 px-4 rounded hover:bg-gray-700">Articles</a>
-                    </li>
-                    <li class="mb-4">
-                        <a href="{{ route('admin.categories.index') }}" class="block py-2 px-4 rounded hover:bg-gray-700">Categories</a>
-                    </li>
-                    <li class="mb-4">
-                        <a href="{{ route('admin.seo.index') }}" class="block py-2 px-4 bg-gray-700 rounded">SEO Settings</a>
-                    </li>
-                    <li class="mb-4">
-                        <a href="{{ route('admin.ads.index') }}" class="block py-2 px-4 hover:bg-gray-700 rounded">Manage Ads</a>
-                    </li>
-                    <li class="mb-4">
-                        <a href="{{ route('admin.comments.index') }}" class="block py-2 px-4 bg-gray-700 rounded">
-                            Comments
-                        </a>
-                    </li>
-                    <li class="mb-4">
-                        <a href="{{ route('logout') }}" class="block py-2 px-4 rounded hover:bg-gray-700"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            Logout
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                            @csrf
-                        </form>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
-
-        <main class="flex-1 p-6">
+        
+       
+    
+        <main class="flex-1 p-6 ml-0 md:ml-64">
+            @include('dashboard.nav')
             <header class="bg-white shadow-md rounded-lg p-4 mb-6 flex justify-between items-center">
                 <h1 class="text-xl font-semibold">Ad Management</h1>
                 <button onclick="openModal('addAdModal')" class="bg-blue-500 text-white px-4 py-2 rounded">Add New Ad</button>
             </header>
-
+    
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <h2 class="text-xl font-semibold mb-4">Ads</h2>
                 <table class="w-full border-collapse border border-gray-300">
@@ -104,24 +80,27 @@
                             <tr class="text-center">
                                 <td class="border p-2">{{ $ad->title }}</td>
                                 <td class="border p-2">{{ $ad->position }}</td>
-                                <td class="border p-2"><img src="{{ asset('storage/'.$ad->image) }}" width="100"></td>
+                                <td class="border p-2"><img src="{{ asset('storage/' . $ad->image) }}" width="100"></td>
                                 <td class="border p-2">
                                     <button onclick="editAd({{ $ad->id }})" class="bg-yellow-500 text-white px-4 py-1 rounded">Edit</button>
-                                    <form action="{{ route('admin.ads.destroy', $ad->id) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="bg-red-500 text-white px-4 py-1 rounded">Delete</button>
-                                    </form>
+                                    @if (auth()->user() && auth()->user()->isAdmin())
+                                        <form action="{{ route('admin.ads.destroy', $ad->id) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="bg-red-500 text-white px-4 py-1 rounded">Delete</button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
-
+    
                 <div class="mt-4">{{ $ads->links() }}</div>
             </div>
-
-            <!-- ADD AD MODAL -->
+        </main>
+    </div>
+                <!-- ADD AD MODAL -->
             <div id="addAdModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
                 <div class="bg-white p-6 rounded-lg shadow-md w-1/3">
                     <h2 class="text-xl font-semibold mb-4">Add New Ad</h2>
@@ -191,8 +170,46 @@
         </form>
     </div>
 </div>
-
-        </main>
-    </div>
+    {{-- <div class="md:hidden flex justify-between items-center bg-gray-800 text-white p-4">
+            <h2 class="text-xl font-bold">Admin Dashboard</h2>
+            <button onclick="toggleSidebar()" class="text-white focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div> --}}
+    
+        @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Toastify({
+                    text: "{{ session('success') }}",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "green",
+                }).showToast();
+            });
+        </script>
+    @endif
+    
+    @if (session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Toastify({
+                    text: "{{ session('error') }}",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "red",
+                }).showToast();
+            });
+        </script>
+    @endif
+    
+    
 </body>
+
 </html>

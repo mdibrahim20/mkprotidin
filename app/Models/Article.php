@@ -50,6 +50,28 @@ class Article extends Model
     return $this->hasMany(Comment::class)->where('is_approved', true)->latest();
 }
 
+public function scopeApproved($query)
+{
+    return $query->where('status', 'published');
+}
+public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
     
+    public function scopeInactive($query)
+    {
+        return $query->where('status', 'inactive');
+    }
+
+    public function getFormattedPublishedAtAttribute()
+    {
+        return $this->published_at ? Carbon::parse($this->published_at)->format('M d, Y') : 'Not Published';
+    }
+
+    public function incrementViews()
+    {
+        $this->increment('views');
+    }
 }
 

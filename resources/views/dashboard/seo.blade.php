@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SEO Optimization</title>
+    <!-- Toastify CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+<!-- Toastify JS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         function openModal(modalId) {
@@ -17,46 +23,11 @@
 </head>
 <body class="bg-gray-100">
     <div class="flex h-screen">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-gray-800 text-white p-6">
-            <h2 class="text-2xl font-bold mb-6">Admin Dashboard</h2>
-            <nav class="bg-gray-800 text-white p-4">
-                <ul>
-                    <li class="mb-4">
-                        <a href="{{ route('dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-700">Dashboard</a>
-                    </li>
-                    <li class="mb-4">
-                        <a href="{{ route('admin.articles.index') }}" class="block py-2 px-4 rounded hover:bg-gray-700">Articles</a>
-                    </li>
-                    <li class="mb-4">
-                        <a href="{{ route('admin.categories.index') }}" class="block py-2 px-4 rounded hover:bg-gray-700">Categories</a>
-                    </li>
-                    <li class="mb-4">
-                        <a href="{{ route('admin.seo.index') }}" class="block py-2 px-4 bg-gray-700 rounded">SEO Settings</a>
-                    </li>
-                    <li class="mb-4">
-                        <a href="{{ route('admin.ads.index') }}" class="block py-2 px-4 hover:bg-gray-700 rounded">Manage Ads</a>
-                    </li>
-                    <li class="mb-4">
-                        <a href="{{ route('admin.comments.index') }}" class="block py-2 px-4 bg-gray-700 rounded">
-                            Comments
-                        </a>
-                    </li>
-                    <li class="mb-4">
-                        <a href="{{ route('logout') }}" class="block py-2 px-4 rounded hover:bg-gray-700"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            Logout
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                            @csrf
-                        </form>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
+     
 
         <!-- Main Content -->
-        <main class="flex-1 p-6">
+        <main class="flex-1 p-6 md:ml-64">
+            @include('dashboard.nav')
             <header class="bg-white shadow-md rounded-lg p-4 mb-6 flex justify-between items-center">
                 <h1 class="text-xl font-semibold">SEO Optimization</h1>
                 <button onclick="openModal('seoModal')" class="bg-blue-500 text-white px-4 py-2 rounded">Edit SEO Settings</button>
@@ -98,5 +69,35 @@
             </div>
         </main>
     </div>
+    @if (session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Toastify({
+                text: "{{ session('success') }}",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "green",
+            }).showToast();
+        });
+    </script>
+@endif
+
+@if (session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Toastify({
+                text: "{{ session('error') }}",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "red",
+            }).showToast();
+        });
+    </script>
+@endif
+
 </body>
 </html>

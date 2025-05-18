@@ -19,6 +19,7 @@ class AdminController extends Controller
             'totalCategories' => Category::count(),
             'recentArticles' => Article::latest()->take(5)->get(),
             'tags' => $tags,
+            'totalViews'=>Article::sum('views'),
         ]);
     }
 
@@ -30,6 +31,16 @@ class AdminController extends Controller
     return view('admin.analytics', compact('totalArticles', 'mostViewed'));
 }
 
+public function toggleStatus($id)
+{
+    $user = User::findOrFail($id);
+
+    // Toggle status
+    $user->status = $user->status === 'active' ? 'inactive' : 'active';
+    $user->save();
+
+    return redirect()->back()->with('success', 'User status updated successfully!');
+}
 
     public function index()
     {

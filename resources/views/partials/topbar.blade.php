@@ -52,7 +52,7 @@
 <div class="popup-search-box">
     <button class="searchClose"><i class="fal fa-times"></i></button>
     <form action="{{ route('search') }}">
-        <input type="text" placeholder="What are you looking for?">
+        <input type="text" placeholder="আপনি কি খুজছেন?">
         <button type="submit"><i class="fal fa-search"></i></button>
     </form>
 </div>

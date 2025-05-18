@@ -14,7 +14,7 @@
 </div>
 @php
     $categories = \App\Models\Category::latest()->get();
-    $recentPosts = \App\Models\Article::latest()->take(4)->get();
+    $recentPosts = \App\Models\Article::latest()->where('status', 'published')->take(4)->get();
 @endphp
 <section class="th-blog-wrapper space-top space-extra-bottom">
     <div class="container">

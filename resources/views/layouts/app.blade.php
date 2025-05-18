@@ -34,6 +34,36 @@
 
             <!-- Page Content -->
             <main>
+                @if (session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Toastify({
+                text: "{{ session('success') }}",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "green",
+            }).showToast();
+        });
+    </script>
+@endif
+
+@if (session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Toastify({
+                text: "{{ session('error') }}",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                backgroundColor: "red",
+            }).showToast();
+        });
+    </script>
+@endif
+
                 {{ $slot }}
             </main>
         </div>

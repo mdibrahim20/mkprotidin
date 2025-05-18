@@ -28,6 +28,12 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Schema::dropIfExists('comments');
+        Schema::table('comments', function (Blueprint $table) {
+            $table->dropForeign(['article_id']);
+            $table->dropForeign(['user_id']);
+        });
+    
         Schema::dropIfExists('comments');
     }
 };

@@ -17,13 +17,13 @@ return new class extends Migration
             $table->string('slug')->unique(); // SEO-friendly URL
             $table->text('content');
             $table->unsignedBigInteger('category_id')->nullable();
-            $table->unsignedBigInteger('user_id'); // Journalist/Admin
+            $table->unsignedBigInteger('user_id')->nullable(); // Journalist/Admin
             
             $table->string('image')->nullable(); // Image path storage
             $table->text('meta_title')->nullable(); // SEO meta title
             $table->text('meta_description')->nullable(); // SEO meta description
             $table->integer('views')->default(0);
-            $table->enum('status', ['draft', 'published'])->default('draft');
+            $table->enum('status', ['pending', 'published', 'inactive'])->default('pending');
             $table->timestamp('published_at')->nullable(); // Schedule articles
 
             $table->timestamps();
@@ -49,6 +49,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('comments', function (Blueprint $table) {
+            $table->dropForeign(['article_id']);
+        });
+    
         Schema::dropIfExists('articles');
     }
 };
